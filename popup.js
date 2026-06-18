@@ -221,28 +221,69 @@ document.getElementById('btn-clear-intel').addEventListener('click', () => {
   chrome.storage.local.set({ intel: [] }, renderIntel);
 });
 
-// ─── SETTINGS ────────────────────────────────────────────────────
+// ─── SETTINGS — MULTI-KEY MANAGER ────────────────────────────────
+function loadKeys() {
+  chrome.storage.local.get(['apiKeys', 'activeKeyId'], ({ apiKeys = [], activeKeyId }) => {
+    const list = document.getElementById('keys-list');
+    list.innerHTML = '';
+    if (!apiKeys.length) {
+      list.innerHTML = '<p style="color:#003a10;font-size:11px;text-align:center;padding:8px">NO KEYS ON FILE</p>';
+      return;
+    }
+    apiKeys.forEach(k => {
+      const isActive = k.id === activeKeyId;
+      const item = document.createElement('div');
+      item.className = 'key-item' + (isActive ? ' active' : '');
+      item.innerHTML = `
+        <div class="key-item-label">⬡ ${k.label}</div>
+        ${isActive ? '<span class="key-active-badge">● ACTIVE</span>' : '<button class="key-item-use" data-id="${k.id}">USE</button>'}
+        <button class="key-item-del" data-id="${k.id}">✕</button>`;
+      if (!isActive) {
+        item.querySelector('.key-item-use').addEventListener('click', () => setActiveKey(k.id));
+      }
+      item.querySelector('.key-item-del').addEventListener('click', () => deleteKey(k.id));
+      list.appendChild(item);
+    });
+    // Update key-status bar
+    const status = document.getElementById('key-status');
+    const active = apiKeys.find(k => k.id === activeKeyId);
+    if (active) { status.textContent = `✔ ACTIVE: ${active.label}`; status.className = 'key-status ok'; }
+    else { status.textContent = '— NO ACTIVE KEY'; status.className = 'key-status err'; }
+  });
+}
+
+function setActiveKey(id) {
+  chrome.storage.local.set({ activeKeyId: id }, loadKeys);
+}
+
+function deleteKey(id) {
+  chrome.storage.local.get(['apiKeys', 'activeKeyId'], ({ apiKeys = [], activeKeyId }) => {
+    const updated = apiKeys.filter(k => k.id !== id);
+    const updates = { apiKeys: updated };
+    if (activeKeyId === id) updates.activeKeyId = updated.length ? updated[0].id : null;
+    chrome.storage.local.set(updates, loadKeys);
+  });
+}
+
 document.getElementById('btn-save-key').addEventListener('click', () => {
+  const label = document.getElementById('key-label-input').value.trim();
   const key = document.getElementById('api-key-input').value.trim();
   const status = document.getElementById('key-status');
-  if (!key.startsWith('sk-ant-')) {
-    status.textContent = '✕ INVALID KEY FORMAT';
-    status.className = 'key-status err';
-    return;
-  }
-  chrome.storage.local.set({ apiKey: key }, () => {
-    status.textContent = '✔ KEY SAVED — OPERATOR AUTHENTICATED';
-    status.className = 'key-status ok';
-    document.getElementById('api-key-input').value = '';
+  if (!label) { status.textContent = '✕ ENTER A KEY LABEL'; status.className = 'key-status err'; return; }
+  if (!key.startsWith('sk-ant-')) { status.textContent = '✕ INVALID KEY FORMAT'; status.className = 'key-status err'; return; }
+  chrome.storage.local.get(['apiKeys'], ({ apiKeys = [] }) => {
+    const newKey = { id: Date.now().toString(), label, value: key };
+    const updated = [...apiKeys, newKey];
+    chrome.storage.local.set({ apiKeys: updated, activeKeyId: newKey.id }, () => {
+      document.getElementById('key-label-input').value = '';
+      document.getElementById('api-key-input').value = '';
+      loadKeys();
+    });
   });
 });
 
-chrome.storage.local.get(['apiKey'], ({ apiKey }) => {
-  if (apiKey) {
-    document.getElementById('key-status').textContent = '✔ KEY ON FILE';
-    document.getElementById('key-status').className = 'key-status ok';
-  }
-});
+// Init settings tab when opened
+document.querySelector('[data-tab="settings"]').addEventListener('click', loadKeys);
 
 // ─── SCAN ─────────────────────────────────────────────────────────
 function showState(id) {
@@ -265,8 +306,10 @@ document.getElementById('btn-rescan').addEventListener('click', runScan);
 document.getElementById('btn-retry').addEventListener('click', runScan);
 
 async function runScan() {
-  chrome.storage.local.get(['jds', 'activeJdId', 'apiKey'], async ({ jds = [], activeJdId: aid, apiKey }) => {
-    if (!apiKey) { showState('scan-error'); document.getElementById('error-msg').textContent = '✕ NO API KEY — GO TO [ CONFIG ]'; return; }
+  chrome.storage.local.get(['jds', 'activeJdId', 'apiKeys', 'activeKeyId'], async ({ jds = [], activeJdId: aid, apiKeys = [], activeKeyId }) => {
+    const activeKeyObj = apiKeys.find(k => k.id === activeKeyId);
+    const apiKey = activeKeyObj?.value;
+    if (!apiKey) { showState('scan-error'); document.getElementById('error-msg').textContent = '✕ NO ACTIVE KEY — GO TO [ CONFIG ]'; return; }
     const activeJd = jds.find(j => j.id === aid);
     if (!activeJd) { showState('scan-error'); document.getElementById('error-msg').textContent = '✕ NO ACTIVE MISSION — GO TO [ JDs ]'; return; }
 
