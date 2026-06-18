@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "CODEC — LinkedIn Recon",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Tactical LinkedIn profile matcher for recruiters. Powered by Claude AI.",
   "permissions": ["activeTab", "scripting", "storage", "tabs"],
   "host_permissions": [
