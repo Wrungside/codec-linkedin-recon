@@ -96,14 +96,15 @@ document.getElementById('btn-add-jd').addEventListener('click', async () => {
     const url = document.getElementById('jd-url').value.trim();
     if (!url) { alert('ENTER A URL'); return; }
     document.getElementById('btn-add-jd').textContent = 'FETCHING...';
-    try {
-      const resp = await fetch(url);
-      const html = await resp.text();
-      const doc = new DOMParser().parseFromString(html, 'text/html');
-      content = doc.body.innerText.replace(/\s+/g, ' ').trim().slice(0, 8000);
-      saveJd(name, content);
-    } catch { alert('FAILED TO FETCH URL. TRY TEXT INPUT.'); }
-    document.getElementById('btn-add-jd').textContent = '+ ADD MISSION';
+    chrome.runtime.sendMessage({ type: 'FETCH_URL', url }, response => {
+      if (response?.ok) {
+        saveJd(name, response.text);
+      } else {
+        alert('FAILED TO FETCH URL. TRY TEXT INPUT.
+' + (response?.error || ''));
+      }
+      document.getElementById('btn-add-jd').textContent = '+ ADD MISSION';
+    });
   } else if (jdInputType === 'pdf') {
     const file = document.getElementById('jd-pdf-file').files[0];
     if (!file) { alert('SELECT A PDF FILE'); return; }
