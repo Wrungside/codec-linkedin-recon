@@ -8,10 +8,11 @@
 <body>
   <div id="app">
     <div class="header">
-      <div class="codec-logo"><span class="blink">▮</span> CODEC <span class="version">v2.0</span></div>
+      <div class="codec-logo"><span class="blink">▮</span> CODEC <span class="version">v3.0</span></div>
       <div class="nav-tabs">
         <button class="tab-btn active" data-tab="scan">[ SCAN ]</button>
         <button class="tab-btn" data-tab="jds">[ JDs ]</button>
+        <button class="tab-btn" data-tab="groups">[ GROUPS ]</button>
         <button class="tab-btn" data-tab="intel">[ INTEL ]</button>
         <button class="tab-btn" data-tab="settings">[ CONFIG ]</button>
       </div>
@@ -19,57 +20,94 @@
 
     <!-- SCAN TAB -->
     <div id="tab-scan" class="tab-content active">
-      <div class="active-jd-bar">
-        <span class="label">ACTIVE MISSION:</span>
-        <span id="active-jd-name">— NO JD LOADED —</span>
+      <div class="scan-mode-toggle">
+        <button class="mode-btn active" id="mode-single">SINGLE JD</button>
+        <button class="mode-btn" id="mode-group">GROUP SCAN</button>
       </div>
-      <div class="scan-area">
-        <div id="scan-idle" class="scan-state">
-          <div class="target-box">
-            <div class="corner tl"></div><div class="corner tr"></div>
-            <div class="corner bl"></div><div class="corner br"></div>
-            <p class="scan-hint">NAVIGATE TO A<br/>LINKEDIN PROFILE<br/>TO BEGIN RECON</p>
-          </div>
-          <button id="btn-scan" class="cta-btn">⬡ INITIATE SCAN</button>
+
+      <!-- SINGLE MODE -->
+      <div id="single-mode">
+        <div class="active-jd-bar">
+          <span class="label">ACTIVE MISSION:</span>
+          <span id="active-jd-name">— NO JD LOADED —</span>
         </div>
-        <div id="scan-loading" class="scan-state hidden">
-          <div class="loader-wrap">
-            <div class="scanline-anim"></div>
-            <p class="loading-text" id="loading-msg">SCANNING TARGET...</p>
-            <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+        <div class="scan-area">
+          <div id="scan-idle" class="scan-state">
+            <div class="target-box">
+              <div class="corner tl"></div><div class="corner tr"></div>
+              <div class="corner bl"></div><div class="corner br"></div>
+              <p class="scan-hint">NAVIGATE TO A<br/>LINKEDIN PROFILE<br/>TO BEGIN RECON</p>
+            </div>
+            <button id="btn-scan" class="cta-btn">⬡ INITIATE SCAN</button>
+          </div>
+          <div id="scan-loading" class="scan-state hidden">
+            <div class="loader-wrap">
+              <div class="scanline-anim"></div>
+              <p class="loading-text" id="loading-msg">SCANNING TARGET...</p>
+              <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+            </div>
+          </div>
+          <div id="scan-result" class="scan-state hidden">
+            <div class="score-section">
+              <div class="score-label">COMPATIBILITY SCORE</div>
+              <div class="score-ring">
+                <svg viewBox="0 0 120 120" class="ring-svg">
+                  <circle cx="60" cy="60" r="52" class="ring-bg"/>
+                  <circle cx="60" cy="60" r="52" class="ring-fill" id="ring-fill"/>
+                </svg>
+                <div class="score-number" id="score-number">--</div>
+              </div>
+              <div class="score-verdict" id="score-verdict">ANALYZING...</div>
+            </div>
+            <div class="report-blocks">
+              <div class="block strengths"><div class="block-title">◆ STRENGTHS</div><div class="block-content" id="block-strengths"></div></div>
+              <div class="block gaps"><div class="block-title">◆ GAPS</div><div class="block-content" id="block-gaps"></div></div>
+              <div class="block verdict"><div class="block-title">◆ MISSION VERDICT</div><div class="block-content" id="block-verdict"></div></div>
+            </div>
+            <button id="btn-rescan" class="cta-btn secondary">↺ RE-SCAN</button>
+          </div>
+          <div id="scan-error" class="scan-state hidden">
+            <p class="error-msg" id="error-msg">TRANSMISSION FAILED</p>
+            <button id="btn-retry" class="cta-btn secondary">↺ RETRY</button>
           </div>
         </div>
-        <div id="scan-result" class="scan-state hidden">
-          <div class="score-section">
-            <div class="score-label">COMPATIBILITY SCORE</div>
-            <div class="score-ring">
-              <svg viewBox="0 0 120 120" class="ring-svg">
-                <circle cx="60" cy="60" r="52" class="ring-bg"/>
-                <circle cx="60" cy="60" r="52" class="ring-fill" id="ring-fill"/>
-              </svg>
-              <div class="score-number" id="score-number">--</div>
-            </div>
-            <div class="score-verdict" id="score-verdict">ANALYZING...</div>
-          </div>
-          <div class="report-blocks">
-            <div class="block strengths">
-              <div class="block-title">◆ STRENGTHS</div>
-              <div class="block-content" id="block-strengths"></div>
-            </div>
-            <div class="block gaps">
-              <div class="block-title">◆ GAPS</div>
-              <div class="block-content" id="block-gaps"></div>
-            </div>
-            <div class="block verdict">
-              <div class="block-title">◆ MISSION VERDICT</div>
-              <div class="block-content" id="block-verdict"></div>
-            </div>
-          </div>
-          <button id="btn-rescan" class="cta-btn secondary">↺ RE-SCAN</button>
+      </div>
+
+      <!-- GROUP MODE -->
+      <div id="group-mode" class="hidden">
+        <div class="active-jd-bar">
+          <span class="label">ACTIVE GROUP:</span>
+          <span id="active-group-name">— NO GROUP SELECTED —</span>
         </div>
-        <div id="scan-error" class="scan-state hidden">
-          <p class="error-msg" id="error-msg">TRANSMISSION FAILED</p>
-          <button id="btn-retry" class="cta-btn secondary">↺ RETRY</button>
+        <div id="group-select-bar" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+        <div class="scan-area">
+          <div id="group-idle" class="scan-state">
+            <div class="target-box">
+              <div class="corner tl"></div><div class="corner tr"></div>
+              <div class="corner bl"></div><div class="corner br"></div>
+              <p class="scan-hint">SELECT A GROUP<br/>AND NAVIGATE TO A<br/>LINKEDIN PROFILE</p>
+            </div>
+            <button id="btn-group-scan" class="cta-btn">⬡ INITIATE GROUP SCAN</button>
+          </div>
+          <div id="group-loading" class="scan-state hidden">
+            <div class="loader-wrap">
+              <div class="scanline-anim"></div>
+              <p class="loading-text" id="group-loading-msg">SCANNING TARGET...</p>
+              <div class="progress-bar"><div class="progress-fill" id="group-progress-fill"></div></div>
+            </div>
+          </div>
+          <div id="group-result" class="scan-state hidden">
+            <div class="group-result-header">
+              <div class="group-result-title">MULTI-MATCH REPORT</div>
+              <div class="group-result-sub" id="group-result-sub"></div>
+            </div>
+            <div id="group-result-cards" class="group-cards"></div>
+            <button id="btn-group-rescan" class="cta-btn secondary" style="margin-top:8px">↺ RE-SCAN GROUP</button>
+          </div>
+          <div id="group-error" class="scan-state hidden">
+            <p class="error-msg" id="group-error-msg">TRANSMISSION FAILED</p>
+            <button id="btn-group-retry" class="cta-btn secondary">↺ RETRY</button>
+          </div>
         </div>
       </div>
     </div>
@@ -96,16 +134,30 @@
       </div>
     </div>
 
+    <!-- GROUPS TAB -->
+    <div id="tab-groups" class="tab-content hidden">
+      <div class="section-title">MISSION GROUPS</div>
+      <div id="groups-list" class="groups-list"></div>
+      <div class="add-jd-section">
+        <div class="section-title" style="margin-bottom:8px">CREATE GROUP</div>
+        <input type="text" id="group-name-input" placeholder="GROUP NAME (e.g. Senior Track)..." class="codec-input"/>
+        <button id="btn-create-group" class="cta-btn">+ CREATE GROUP</button>
+      </div>
+      <div id="group-edit-panel" class="group-edit-panel hidden">
+        <div class="group-edit-title">EDITING: <span id="group-edit-name"></span></div>
+        <div class="section-title" style="margin:6px 0 4px">ADD JDs TO GROUP</div>
+        <div id="group-jd-picker" class="group-jd-picker"></div>
+        <button id="btn-close-edit" class="cta-btn secondary" style="margin-top:8px">✔ DONE</button>
+      </div>
+    </div>
+
     <!-- INTEL TAB -->
     <div id="tab-intel" class="tab-content hidden">
       <div class="intel-header">
         <div class="section-title">CANDIDATE INTEL</div>
         <span class="intel-hint">AUTO-PURGE AFTER 48H</span>
       </div>
-      <div id="intel-empty" class="intel-empty hidden">
-        <p>NO INTEL ON FILE</p>
-        <p style="font-size:10px;color:#003a10;margin-top:4px">SCAN A LINKEDIN PROFILE TO BEGIN</p>
-      </div>
+      <div id="intel-empty" class="intel-empty hidden"><p>NO INTEL ON FILE</p><p style="font-size:10px;color:#003a10;margin-top:4px">SCAN A LINKEDIN PROFILE TO BEGIN</p></div>
       <div class="intel-list" id="intel-list"></div>
       <button id="btn-clear-intel" class="cta-btn secondary" style="margin-top:8px">✕ CLEAR ALL INTEL</button>
     </div>
@@ -126,7 +178,7 @@
       </div>
       <div class="settings-block">
         <div class="settings-title">ABOUT</div>
-        <p class="settings-hint">CODEC v2.0 — LinkedIn Recon Tool<br/>Powered by Claude AI (Anthropic)<br/>Built for tactical recruiters.</p>
+        <p class="settings-hint">CODEC v3.0 — LinkedIn Recon Tool<br/>Powered by Claude AI (Anthropic)<br/>Built for tactical recruiters.</p>
       </div>
     </div>
 
