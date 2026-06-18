@@ -128,5 +128,15 @@ body::before {
 .key-status { font-size: 11px; letter-spacing: 1px; text-align: center; }
 .key-status.ok { color: #00ff41; } .key-status.err { color: #ff4444; }
 
+#keys-list { display: flex; flex-direction: column; gap: 6px; }
+.key-item { display: flex; align-items: center; gap: 6px; border: 1px solid #003a10; padding: 7px 10px; background: #000d04; }
+.key-item.active { border-color: #ffb700; background: #1a1000; }
+.key-item-label { flex: 1; font-size: 11px; color: #00ff41; }
+.key-item.active .key-item-label { color: #ffb700; }
+.key-active-badge { font-size: 9px; color: #ffb700; letter-spacing: 1px; white-space: nowrap; }
+.key-item-use { background: none; border: 1px solid #003a10; color: #005f1a; cursor: pointer; font-family: inherit; font-size: 10px; padding: 2px 7px; letter-spacing: 1px; }
+.key-item-use:hover { border-color: #00ff41; color: #00ff41; }
+.key-item-del { background: none; border: none; color: #ff4444; cursor: pointer; font-size: 14px; padding: 0 2px; font-family: inherit; }
+
 .footer { border-top: 1px solid #003a10; padding: 5px 12px; text-align: center; }
 .footer-text { color: #002a0d; font-size: 9px; letter-spacing: 3px; }
