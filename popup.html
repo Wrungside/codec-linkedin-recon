@@ -114,10 +114,15 @@
     <div id="tab-settings" class="tab-content hidden">
       <div class="settings-block">
         <div class="settings-title">OPERATOR CREDENTIALS</div>
-        <p class="settings-hint">Your API key is stored locally and never shared.</p>
+        <p class="settings-hint">Keys are stored locally and never shared.</p>
+        <input type="text" id="key-label-input" placeholder="KEY LABEL (e.g. CLIENT A)..." class="codec-input"/>
         <input type="password" id="api-key-input" placeholder="sk-ant-..." class="codec-input"/>
-        <button id="btn-save-key" class="cta-btn">SAVE KEY</button>
+        <button id="btn-save-key" class="cta-btn">+ ADD KEY</button>
         <div id="key-status" class="key-status"></div>
+      </div>
+      <div class="settings-block">
+        <div class="settings-title">SAVED KEYS</div>
+        <div id="keys-list"></div>
       </div>
       <div class="settings-block">
         <div class="settings-title">ABOUT</div>
