@@ -1,21 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8"/>
   <title>CODEC</title>
-  <link rel="stylesheet" href="popup.css" />
+  <link rel="stylesheet" href="popup.css"/>
 </head>
 <body>
   <div id="app">
-    <!-- HEADER -->
     <div class="header">
-      <div class="codec-logo">
-        <span class="blink">▮</span> CODEC <span class="version">v1.0</span>
-      </div>
+      <div class="codec-logo"><span class="blink">▮</span> CODEC <span class="version">v2.0</span></div>
       <div class="nav-tabs">
         <button class="tab-btn active" data-tab="scan">[ SCAN ]</button>
         <button class="tab-btn" data-tab="jds">[ JDs ]</button>
+        <button class="tab-btn" data-tab="intel">[ INTEL ]</button>
         <button class="tab-btn" data-tab="settings">[ CONFIG ]</button>
       </div>
     </div>
@@ -29,10 +26,8 @@
       <div class="scan-area">
         <div id="scan-idle" class="scan-state">
           <div class="target-box">
-            <div class="corner tl"></div>
-            <div class="corner tr"></div>
-            <div class="corner bl"></div>
-            <div class="corner br"></div>
+            <div class="corner tl"></div><div class="corner tr"></div>
+            <div class="corner bl"></div><div class="corner br"></div>
             <p class="scan-hint">NAVIGATE TO A<br/>LINKEDIN PROFILE<br/>TO BEGIN RECON</p>
           </div>
           <button id="btn-scan" class="cta-btn">⬡ INITIATE SCAN</button>
@@ -81,16 +76,18 @@
 
     <!-- JDs TAB -->
     <div id="tab-jds" class="tab-content hidden">
+      <div class="section-title">SAVED MISSIONS</div>
       <div class="jd-list" id="jd-list"></div>
       <div class="add-jd-section">
+        <div class="section-title" style="margin-bottom:8px">ADD MISSION</div>
         <div class="jd-input-type">
           <button class="type-btn active" data-type="text">TEXT</button>
           <button class="type-btn" data-type="url">URL</button>
           <button class="type-btn" data-type="pdf">PDF</button>
         </div>
-        <input type="text" id="jd-name" placeholder="MISSION NAME..." class="codec-input" />
+        <input type="text" id="jd-name" placeholder="MISSION NAME..." class="codec-input"/>
         <textarea id="jd-text" placeholder="PASTE JOB DESCRIPTION..." class="codec-textarea" rows="4"></textarea>
-        <input type="text" id="jd-url" placeholder="https://..." class="codec-input hidden" />
+        <input type="text" id="jd-url" placeholder="https://..." class="codec-input hidden"/>
         <div id="jd-pdf-area" class="pdf-drop hidden">
           <label for="jd-pdf-file">⬆ DROP PDF OR CLICK TO UPLOAD</label>
           <input type="file" id="jd-pdf-file" accept=".pdf" style="display:none"/>
@@ -99,24 +96,36 @@
       </div>
     </div>
 
+    <!-- INTEL TAB -->
+    <div id="tab-intel" class="tab-content hidden">
+      <div class="intel-header">
+        <div class="section-title">CANDIDATE INTEL</div>
+        <span class="intel-hint">AUTO-PURGE AFTER 48H</span>
+      </div>
+      <div id="intel-empty" class="intel-empty hidden">
+        <p>NO INTEL ON FILE</p>
+        <p style="font-size:10px;color:#003a10;margin-top:4px">SCAN A LINKEDIN PROFILE TO BEGIN</p>
+      </div>
+      <div class="intel-list" id="intel-list"></div>
+      <button id="btn-clear-intel" class="cta-btn secondary" style="margin-top:8px">✕ CLEAR ALL INTEL</button>
+    </div>
+
     <!-- SETTINGS TAB -->
     <div id="tab-settings" class="tab-content hidden">
       <div class="settings-block">
         <div class="settings-title">OPERATOR CREDENTIALS</div>
         <p class="settings-hint">Your API key is stored locally and never shared.</p>
-        <input type="password" id="api-key-input" placeholder="sk-ant-..." class="codec-input" />
+        <input type="password" id="api-key-input" placeholder="sk-ant-..." class="codec-input"/>
         <button id="btn-save-key" class="cta-btn">SAVE KEY</button>
         <div id="key-status" class="key-status"></div>
       </div>
       <div class="settings-block">
         <div class="settings-title">ABOUT</div>
-        <p class="settings-hint">CODEC v1.0 — LinkedIn Recon Tool<br/>Powered by Claude AI (Anthropic)<br/>Built for tactical recruiters.</p>
+        <p class="settings-hint">CODEC v2.0 — LinkedIn Recon Tool<br/>Powered by Claude AI (Anthropic)<br/>Built for tactical recruiters.</p>
       </div>
     </div>
 
-    <div class="footer">
-      <span class="footer-text">CODEC SYSTEM ▮ CLASSIFIED</span>
-    </div>
+    <div class="footer"><span class="footer-text">CODEC SYSTEM ▮ CLASSIFIED</span></div>
   </div>
   <script src="lib/pdf.min.js"></script>
   <script src="popup.js"></script>
